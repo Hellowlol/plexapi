@@ -19,7 +19,7 @@ class Video(PlexPartialObject):
         self.key = data.attrib.get('key', NA)
         self.lastViewedAt = utils.toDatetime(data.attrib.get('lastViewedAt', NA))
         self.librarySectionID = data.attrib.get('librarySectionID', NA)
-        self.ratingKey = data.attrib.get('ratingKey', NA)
+        self.ratingKey = utils.cast(int, data.attrib.get('ratingKey', NA))
         self.summary = data.attrib.get('summary', NA)
         self.thumb = data.attrib.get('thumb', NA)
         self.title = data.attrib.get('title', NA)
@@ -51,7 +51,7 @@ class Video(PlexPartialObject):
 
     def refresh(self):
         self.server.query('%s/refresh' % self.key, method=self.server.session.put)
-        
+
     def section(self):
         return self.server.library.sectionByID(self.librarySectionID)
 
@@ -73,7 +73,7 @@ class Movie(Video, Playable):
         self.originalTitle = data.attrib.get('originalTitle', NA)
         self.originallyAvailableAt = utils.toDatetime(data.attrib.get('originallyAvailableAt', NA), '%Y-%m-%d')
         self.primaryExtraKey = data.attrib.get('primaryExtraKey', NA)
-        self.rating = data.attrib.get('rating', NA)
+        self.rating = utils.cast(float, data.attrib.get('rating', NA))
         self.ratingImage = data.attrib.get('ratingImage', NA)
         self.studio = data.attrib.get('studio', NA)
         self.tagline = data.attrib.get('tagline', NA)
@@ -93,11 +93,11 @@ class Movie(Video, Playable):
             self.videoStreams = utils.findStreams(self.media, 'videostream')
             self.audioStreams = utils.findStreams(self.media, 'audiostream')
             self.subtitleStreams = utils.findStreams(self.media, 'subtitlestream')
-    
+
     @property
     def actors(self):
         return self.roles
-    
+
     @property
     def isWatched(self):
         return bool(self.viewCount > 0)
@@ -131,7 +131,7 @@ class Show(Video):
     @property
     def actors(self):
         return self.roles
-        
+
     @property
     def isWatched(self):
         return bool(self.viewedLeafCount == self.leafCount)
@@ -173,10 +173,9 @@ class Season(Video):
         Video._loadData(self, data)
         self.leafCount = utils.cast(int, data.attrib.get('leafCount', NA))
         self.index = data.attrib.get('index', NA)
-        self.parentKey = data.attrib.get('parentKey', NA)
-        self.parentRatingKey = data.attrib.get('parentRatingKey', NA)
+        self.parentRatingKey = utils.cast(int, data.attrib.get('parentRatingKey', NA))
         self.viewedLeafCount = utils.cast(int, data.attrib.get('viewedLeafCount', NA))
-        
+
     @property
     def isWatched(self):
         return bool(self.viewedLeafCount == self.leafCount)
@@ -218,8 +217,8 @@ class Episode(Video, Playable):
         self.contentRating = data.attrib.get('contentRating', NA)
         self.duration = utils.cast(int, data.attrib.get('duration', NA))
         self.grandparentArt = data.attrib.get('grandparentArt', NA)
-        self.grandparentKey = data.attrib.get('grandparentKey', NA)
-        self.grandparentRatingKey = data.attrib.get('grandparentRatingKey', NA)
+        self.grandparentKey = utils.cast(int, data.attrib.get('grandparentKey', NA))
+        self.grandparentRatingKey = utils.cast(int, data.attrib.get('grandparentRatingKey', NA))
         self.grandparentTheme = data.attrib.get('grandparentTheme', NA)
         self.grandparentThumb = data.attrib.get('grandparentThumb', NA)
         self.grandparentTitle = data.attrib.get('grandparentTitle', NA)
@@ -228,7 +227,7 @@ class Episode(Video, Playable):
         self.originallyAvailableAt = utils.toDatetime(data.attrib.get('originallyAvailableAt', NA), '%Y-%m-%d')
         self.parentIndex = data.attrib.get('parentIndex', NA)
         self.parentKey = data.attrib.get('parentKey', NA)
-        self.parentRatingKey = data.attrib.get('parentRatingKey', NA)
+        self.parentRatingKey = utils.cast(int, data.attrib.get('parentRatingKey', NA))
         self.parentThumb = data.attrib.get('parentThumb', NA)
         self.rating = utils.cast(float, data.attrib.get('rating', NA))
         self.viewOffset = utils.cast(int, data.attrib.get('viewOffset', 0))

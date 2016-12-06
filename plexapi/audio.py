@@ -9,7 +9,7 @@ NA = utils.NA
 
 class Audio(PlexPartialObject):
     TYPE = None
-    
+
     def __init__(self, server, data, initpath):
         super(Audio, self).__init__(data, initpath, server)
 
@@ -20,7 +20,7 @@ class Audio(PlexPartialObject):
         self.key = data.attrib.get('key', NA)
         self.lastViewedAt = utils.toDatetime(data.attrib.get('lastViewedAt', NA))
         self.librarySectionID = data.attrib.get('librarySectionID', NA)
-        self.ratingKey = data.attrib.get('ratingKey', NA)
+        self.ratingKey = utils.cast(int, data.attrib.get('ratingKey', NA))
         self.summary = data.attrib.get('summary', NA)
         self.thumb = data.attrib.get('thumb', NA)
         self.title = data.attrib.get('title', NA)
@@ -28,14 +28,14 @@ class Audio(PlexPartialObject):
         self.type = data.attrib.get('type', NA)
         self.updatedAt = utils.toDatetime(data.attrib.get('updatedAt', NA))
         self.viewCount = utils.cast(int, data.attrib.get('viewCount', 0))
-        
+
     @property
     def thumbUrl(self):
         return self.server.url(self.thumb)
-    
+
     def refresh(self):
         self.server.query('%s/refresh' % self.key, method=self.server.session.put)
-    
+
     def section(self):
         return self.server.library.sectionByID(self.librarySectionID)
 
@@ -85,7 +85,7 @@ class Album(Audio):
         self.key = self.key.replace('/children', '')  # FIX_BUG_50
         self.originallyAvailableAt = utils.toDatetime(data.attrib.get('originallyAvailableAt', NA), '%Y-%m-%d')
         self.parentKey = data.attrib.get('parentKey', NA)
-        self.parentRatingKey = data.attrib.get('parentRatingKey', NA)
+        self.parentRatingKey = utils.cast(int, data.attrib.get('parentRatingKey', NA))
         self.parentThumb = data.attrib.get('parentThumb', NA)
         self.parentTitle = data.attrib.get('parentTitle', NA)
         self.studio = data.attrib.get('studio', NA)
@@ -126,14 +126,14 @@ class Track(Audio, Playable):
         self.duration = utils.cast(int, data.attrib.get('duration', NA))
         self.grandparentArt = data.attrib.get('grandparentArt', NA)
         self.grandparentKey = data.attrib.get('grandparentKey', NA)
-        self.grandparentRatingKey = data.attrib.get('grandparentRatingKey', NA)
+        self.grandparentRatingKey = utils.cast(int, data.attrib.get('grandparentRatingKey', NA))
         self.grandparentThumb = data.attrib.get('grandparentThumb', NA)
-        self.grandparentTitle = data.attrib.get('grandparentTitle', NA)
+        self.grandparentTitle = data.attributils.get('grandparentTitle', NA)
         self.guid = data.attrib.get('guid', NA)
         self.originalTitle = data.attrib.get('originalTitle', NA)
         self.parentIndex = data.attrib.get('parentIndex', NA)
         self.parentKey = data.attrib.get('parentKey', NA)
-        self.parentRatingKey = data.attrib.get('parentRatingKey', NA)
+        self.parentRatingKey = utils.cast(int, data.attrib.get('parentRatingKey', NA))
         self.parentThumb = data.attrib.get('parentThumb', NA)
         self.parentTitle = data.attrib.get('parentTitle', NA)
         self.primaryExtraKey = data.attrib.get('primaryExtraKey', NA)
